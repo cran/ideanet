@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>MRQAP</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">MRQAP</h1>
+
+
+
+<p>MRQAP tests associations across the dyads of a network. Questions
+generally ask whether one relation is associated with another relation
+in multi-relational networks (e.g. <em>do marriage ties correlate with
+business ties?</em>), or whether similarity on dyadic features predict
+tie formation (e.g. <em>are same-race pairs more likely to be
+friends?</em> or generally <em>what shared characteristics predict
+friendship nominations among adolescents in an American high
+school?</em>). MRQAP is an extension of the Mantel test which uses node
+permutation to accommodate issues of non-independence that bias
+traditional regression analysis estimates using (sociocentric) network
+data. To illustrate how to use MRQAP with <code>ideanet</code>, we’ll
+use the Faux Mesa High dataset native to the package.</p>
+<p>Preparing to use <code>ideanet</code>’s MRQAP module is easy: all we
+need is the <code>igraph</code> object produced using
+<code>netwrite</code>, as this object contains the various node-level
+attributes contained in a user’s original nodelist as well as the
+node-level measurements produced by <code>netwrite</code>.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(ideanet)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>nw_fauxmesa <span class="ot">&lt;-</span> <span class="fu">netwrite</span>(<span class="at">nodelist =</span> fauxmesa_nodes,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>                        <span class="at">node_id =</span> <span class="st">&quot;id&quot;</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                        <span class="at">i_elements =</span> fauxmesa_edges<span class="sc">$</span>from,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>                        <span class="at">j_elements =</span> fauxmesa_edges<span class="sc">$</span>to,</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>                        <span class="at">directed =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>                        <span class="at">net_name =</span> <span class="st">&quot;faux_mesa&quot;</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>                        <span class="at">shiny =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<p>When we look at the original nodelist passed to <code>netwrite</code>
+(<code>fauxmesa_nodes</code>), we see that we have information about
+each student’s grade level, their race/ethnicity, and their sex. This
+information exists at the <em>individual level</em> in that it pertains
+to individual students. However, when using MRQAP analysis, we are
+generally interested in how <em>dyadic</em> measures predict outcomes.
+In other words, we’re interested in whether similarities or differences
+between nodes lead to outcomes, both of which are understood at the
+level of ego-alter relationships. While some users may have dyadic
+measures stored in their edgelist ahead of time, typically these
+measures are something one has to generate. The <code>qap_setup</code>
+function in <code>ideanet</code> allows users to quickly take node-level
+attributes and generate dyad-level comparisons with only a few
+arguments.</p>
+<p>These argument are:</p>
+<ul>
+<li><code>net</code>: An <code>igraph</code> object, preferably one
+generated using <code>netwrite</code>. <code>qap_setup</code> also
+supports pre-generated <code>network</code> object should they be
+available to users, but users must ensure that such objects are properly
+sorted to match node-level features.</li>
+<li><code>variables</code>: A character vector of variable names that
+are available in the <code>igraph</code>/<code>network</code> object.
+These should match the names of node/vertex attributes in the object
+passed to <code>net</code>.</li>
+<li><code>methods</code>: A character vector specifying the methods that
+should be applied to each item listed in <code>variables</code>. Values
+in <code>methods</code> must be specified in correct order such that the
+first item in <code>methods</code> applies to the first item in
+<code>variables</code>, the second item in <code>methods</code> the
+second item in <code>variables</code>, and so on. Each item in
+<code>methods</code> must be one of the following:
+<ul>
+<li><code>&quot;multi_category&quot;</code>: Applies to categorical variables
+only. Creates as many variables as there are unique values; each
+variable signals if both ego and alter have the given value.</li>
+<li><code>&quot;reduced_category&quot;</code>: Applies to categorical variables
+only. Creates a single variable that signals if alter and ego have the
+same value.</li>
+<li><code>&quot;both&quot;</code>: Applies to categorical variables only. Computes
+both the <code>&quot;multi_category&quot;</code> and
+<code>&quot;reduced_category&quot;</code> methods.</li>
+<li><code>&quot;difference&quot;</code>: Computes the difference in input value
+between ego and alter. This method will produce two measures for each
+variable to which it is applied: the difference between ego and alter’s
+respective values and the absolute value of this difference. This is
+generally used to estimate dyadic difference effects, such as whether
+differences in popularity correlate with being friends.</li>
+</ul></li>
+<li><code>directed</code>: Specify if edges in the network should be
+interpreted as directed or undirected. Expects <code>TRUE</code> or
+<code>FALSE</code> logical.</li>
+</ul>
+<p>For the Faux Mesa High network, let’s imagine one wants to know
+whether same sex, race, or grade levels affect the likelihood that
+adolescents nominate each other as friends.</p>
+<p>For similarity in sex, we’ll want to apply the
+<code>reduced_category</code> method to the <code>sex</code> variable.
+For combinations of the <code>race</code>, we’ll apply the
+<code>multi_category</code> method. And for <code>grade</code>, which
+we’ll treat as a continuous variable, we’ll use the
+<code>difference</code> method.</p>
+<p>Given the importance of ensuring that each element in the
+<code>variables</code> argument corresponds to the correct element in
+the <code>methods</code> argument, users may find it helpful to store
+both vectors in a data frame prior to running <code>qap_setup</code>.
+This allows us to double-check that all elements appear in the correct
+order.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>var_methods <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">variable =</span> <span class="fu">c</span>(<span class="st">&quot;sex&quot;</span>, <span class="st">&quot;race&quot;</span>, <span class="st">&quot;grade&quot;</span>),</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>                          <span class="at">method =</span> <span class="fu">c</span>(<span class="st">&quot;reduced_category&quot;</span>, <span class="st">&quot;multi_category&quot;</span>, <span class="st">&quot;difference&quot;</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>var_methods</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">variable</th>
+<th align="left">method</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">sex</td>
+<td align="left">reduced_category</td>
+</tr>
+<tr class="even">
+<td align="left">race</td>
+<td align="left">multi_category</td>
+</tr>
+<tr class="odd">
+<td align="left">grade</td>
+<td align="left">difference</td>
+</tr>
+</tbody>
+</table>
+<p>Now that we’ve ensured everything’s in the right order, let’s use
+<code>qap_setup</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>faux_qap_setup <span class="ot">&lt;-</span> <span class="fu">qap_setup</span>(<span class="at">net =</span> nw_fauxmesa<span class="sc">$</span>faux_mesa,</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>                            <span class="at">variables =</span> var_methods<span class="sc">$</span>variable,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                            <span class="at">methods =</span> var_methods<span class="sc">$</span>method,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>                            <span class="at">directed =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<p><code>qap_setup</code> produces a list object containing a nodelist,
+an edgelist containing newly-calculated dyadic measures, and an
+<code>igraph</code> object with these dyadic measures. Let’s quickly
+inspect our new edgelist to see the kinds of variables we’ve just
+created:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">head</span>(faux_qap_setup<span class="sc">$</span>edges)</span></code></pre></div>
+<table>
+<colgroup>
+<col width="2%" />
+<col width="1%" />
+<col width="3%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="7%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="5%" />
+<col width="6%" />
+<col width="5%" />
+<col width="7%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="right">from</th>
+<th align="right">to</th>
+<th align="right">weight</th>
+<th align="left">sex_ego</th>
+<th align="left">sex_alter</th>
+<th align="right">same_sex</th>
+<th align="left">race_ego</th>
+<th align="left">race_alter</th>
+<th align="right">both_race_Hisp</th>
+<th align="right">both_race_NatAm</th>
+<th align="right">both_race_White</th>
+<th align="right">both_race_Other</th>
+<th align="right">both_race_Black</th>
+<th align="right">grade_ego</th>
+<th align="right">grade_alter</th>
+<th align="right">diff_grade</th>
+<th align="right">abs_diff_grade</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">24</td>
+<td align="right">1</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="right">1</td>
+<td align="left">Hisp</td>
+<td align="left">White</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">51</td>
+<td align="right">1</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="right">1</td>
+<td align="left">Hisp</td>
+<td align="left">NatAm</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">57</td>
+<td align="right">1</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="right">1</td>
+<td align="left">Hisp</td>
+<td align="left">Hisp</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">12</td>
+<td align="right">-5</td>
+<td align="right">5</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">69</td>
+<td align="right">1</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="right">1</td>
+<td align="left">Hisp</td>
+<td align="left">NatAm</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="right">0</td>
+<td align="right">86</td>
+<td align="right">1</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="right">1</td>
+<td align="left">Hisp</td>
+<td align="left">White</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="right">0</td>
+<td align="right">91</td>
+<td align="right">1</td>
+<td align="left">F</td>
+<td align="left">F</td>
+<td align="right">1</td>
+<td align="left">Hisp</td>
+<td align="left">NatAm</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p>We now have several new variables. Variables appended with
+<code>_ego</code> and <code>_alter</code> represent the original values
+for each edge’s ego and alter, respectively, as determined in our
+original nodelist. Our <code>same_sex</code> and <code>both_race</code>
+variables are binary indicators of whether ego and alter have the same
+value for a particular attribute. By contrast, <code>diff_grade</code>
+is a continuous measure showing how many grade levels ego and alter are
+apart from each other. Note that values in <code>diff_grade</code> may
+be positive or negative depending on whether or not the node designated
+as ego in the edgelist is in a higher grade level than the node
+designated as alter. Signed differences of this sort can be useful when
+working with directed networks — you can imagine younger students being
+more likely to nominate older students as friends than vice versa. Given
+that ties in our network are undirected, however, the order in which
+egos and alters appear in our edgelist have no real meaning, and whether
+values in <code>diff_grade</code> are positive or negative is largely a
+matter of chance. Consequently, we’re better off using the absolute
+value of ego and alter’s grade level in our analysis, as this measure is
+agnostic to the order in which nodes are presented in our edgelist.
+<code>qap_setup</code> provides us with this absolute value
+automatically — here it is stored in <code>abs_diff_grade</code>.</p>
+<p>With our variables of interest in hand, we turn to the MRQAP analysis
+itself. <code>ideanet</code>’s <code>qap_run</code> function seamlessly
+integrates output from <code>netwrite</code> and <code>qap_setup</code>.
+However, in its current iteration <strong>users must select variables
+produced by <code>qap_setup</code></strong>. Arguments for
+<code>qap_run</code> include:</p>
+<ul>
+<li><code>net</code>: An <code>igraph</code> object containing the
+variables of interest. This <code>igraph</code> object should be one
+produced by <code>qap_setup</code>.</li>
+<li><code>dependent</code>: A single categorical or continuous variable
+name to use as a dependent variable. This variable <em>must</em> be
+produced by <code>qap_setup</code>. If the dependent is set to
+<code>NULL</code> (default), the function will predict the existence of
+a non-weighted tie.</li>
+<li><code>variables</code>: A vector of variable names to use as
+independent variables. These variables <em>must</em> be produced by
+<code>qap_setup</code>.</li>
+<li><code>directed</code>: Specify if the edges should be interpreted as
+directed or undirected. Expects <code>TRUE</code> or <code>FALSE</code>
+logical.</li>
+<li><code>reps</code>: Select the number of permutations. Relevant to
+null-hypothesis testing only. Default is set to <code>500</code>.</li>
+<li><code>family</code>: The functional form the model should follow.
+Currently available are <code>&quot;linear&quot;</code> and
+<code>&quot;binomial&quot;</code>.
+<ul>
+<li><strong>NOTE:</strong> Binomial MRQAP can take a while to simulate;
+for exploratory purposes, it is recommended to stick to a linear
+functional form.</li>
+</ul></li>
+</ul>
+<p><strong>NOTE:</strong> If the input network is multi-relational,
+<code>qap_run</code> will automatically merge duplicated rows. This is
+necessary given that, at this time, the MRQAP wrapper does not elegantly
+handle repeated observations. When merging rows, it will take the
+<em>sum</em> of numeric edge attributes, and a <em>random</em> value of
+character edge attributes. If the user is interested in the association
+between two types of ties (e.g., marriage ties predicting business
+ties), we recommend that they create a set of binary edge attributes
+using <code>qap_setup</code>.</p>
+<p>Let’s use <code>qap_run</code> using the default 500 permutations.
+While we can significantly decrease the number of permutations to allow
+for lower computation times, this may make confidence intervals in our
+results less interpretable. As far as variables go in this example,
+we’ll include <code>same_sex</code>, <code>both_race_White</code>, and
+<code>abs_diff_grade</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>faux_qap <span class="ot">&lt;-</span> <span class="fu">qap_run</span>(<span class="at">net =</span> faux_qap_setup<span class="sc">$</span>graph,</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>                    <span class="at">dependent =</span> <span class="cn">NULL</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>                    <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">&quot;same_sex&quot;</span>, <span class="st">&quot;both_race_White&quot;</span>, <span class="st">&quot;abs_diff_grade&quot;</span>),</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>                    <span class="at">directed =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>                    <span class="at">family =</span> <span class="st">&quot;linear&quot;</span>)</span></code></pre></div>
+<p><code>qap_run</code> returns a list of two objects. The first
+(<code>covs_df</code>) is a data frame summarizing model results in a
+way resembling a traditional regression output. The second
+(<code>mods_df</code>) is a data frame providing the number of dyadic
+observations on which the model is computed.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>faux_qap<span class="sc">$</span>covs_df</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">covars</th>
+<th align="right">estimate</th>
+<th align="right">pvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">intercept</td>
+<td align="right">0.0142453</td>
+<td align="right">0.006</td>
+</tr>
+<tr class="even">
+<td align="left">same_sex</td>
+<td align="right">0.0048255</td>
+<td align="right">0.044</td>
+</tr>
+<tr class="odd">
+<td align="left">both_race_White</td>
+<td align="right">0.0014419</td>
+<td align="right">0.692</td>
+</tr>
+<tr class="even">
+<td align="left">abs_diff_grade</td>
+<td align="right">0.0004715</td>
+<td align="right">0.632</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>faux_qap<span class="sc">$</span>mods_df</span></code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="right">num_obs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="right">10878</td>
+</tr>
+</tbody>
+</table>
+<p>Assuming a p-value of .1 or less indicates some statistical
+significance, our results here tell us that students are more likely to
+nominate students of the same sex as friends, holding all else constant.
+It is recommended that researchers apply the same model with different
+amounts of draws to confirm the confidence intervals associated with
+each variable.</p>
+<p>The above example shows that setting up and using MRQAP in
+<code>ideanet</code> is fast and easy, allowing users to quickly explore
+a variety of model specifications with their own data.</p>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
