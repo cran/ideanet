@@ -16,10 +16,10 @@ nw_fauxmesa <- netwrite(nodelist = fauxmesa_nodes,
                         shiny = TRUE)
 
 ## ----var_meth, eval = FALSE---------------------------------------------------
-#  var_methods <- data.frame(variable = c("sex", "race", "grade"),
-#                            method = c("reduced_category", "multi_category", "difference"))
-#  
-#  var_methods
+# var_methods <- data.frame(variable = c("sex", "race", "grade"),
+#                           method = c("reduced_category", "multi_category", "difference"))
+# 
+# var_methods
 
 ## ----var_meth_kable, echo = FALSE---------------------------------------------
 var_methods <- data.frame(variable = c("sex", "race", "grade"),
@@ -34,7 +34,7 @@ faux_qap_setup <- qap_setup(net = nw_fauxmesa$faux_mesa,
                             directed = FALSE)
 
 ## ----qap_edgelist, eval = FALSE-----------------------------------------------
-#  head(faux_qap_setup$edges)
+# head(faux_qap_setup$edges)
 
 ## ----qap_edgelist_kable, echo = FALSE-----------------------------------------
 knitr::kable(head(faux_qap_setup$edges))
@@ -47,13 +47,13 @@ faux_qap <- qap_run(net = faux_qap_setup$graph,
                     family = "linear")
 
 ## ----qap_results, eval = FALSE------------------------------------------------
-#  faux_qap$covs_df
+# faux_qap$covs_df
 
 ## ----qap_results_kable, echo = FALSE------------------------------------------
 knitr::kable(faux_qap$covs_df)
 
 ## ----mods_df, eval = FALSE----------------------------------------------------
-#  faux_qap$mods_df
+# faux_qap$mods_df
 
 ## ----mods_df_kable, echo = FALSE----------------------------------------------
 knitr::kable(faux_qap$mods_df)

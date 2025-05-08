@@ -2,8 +2,8 @@
 library(ideanet)
 
 ## ----flor_data, eval = FALSE--------------------------------------------------
-#  head(florentine_nodes)
-#  head(florentine_edges)
+# head(florentine_nodes)
+# head(florentine_edges)
 
 ## ----flor_node_kable, echo=FALSE----------------------------------------------
 knitr::kable(head(florentine_nodes))
@@ -32,7 +32,7 @@ flor_cluster <- role_analysis(method = "cluster",
                               fast_triad = TRUE)
 
 ## ----cluster_assignments, eval = FALSE----------------------------------------
-#  head(flor_cluster$cluster_assignments)
+# head(flor_cluster$cluster_assignments)
 
 ## ----cluster_assignments_kable, echo = FALSE----------------------------------
 knitr::kable(head(flor_cluster$cluster_assignments))
@@ -40,44 +40,50 @@ knitr::kable(head(flor_cluster$cluster_assignments))
 ## ----dendrogram---------------------------------------------------------------
 flor_cluster$cluster_dendrogram
 
-## ----cluster_modularity, fig.height = 6, fig.width = 7------------------------
+## ----cluster_modularity-------------------------------------------------------
 flor_cluster$cluster_modularity
 
 ## ----cluster_summaries, eval = FALSE------------------------------------------
-#  flor_cluster$cluster_summaries
+# flor_cluster$cluster_summaries
 
 ## ----cluster_summaries_kable, echo = FALSE------------------------------------
 knitr::kable(flor_cluster$cluster_summaries)
 
-## ----cent_marriage, warning = FALSE, fig.height = 6, fig.width = 7------------
+## ----cent_marriage, warning = FALSE-------------------------------------------
 flor_cluster$cluster_summaries_cent$marriage
 
-## ----cent_business, warning = FALSE, fig.height = 6, fig.width = 7------------
+## ----cent_business, warning = FALSE-------------------------------------------
 flor_cluster$cluster_summaries_cent$business
 
-## ----cent_summary, warning = FALSE, fig.height = 6, fig.width = 7-------------
+## ----cent_summary, warning = FALSE--------------------------------------------
 flor_cluster$cluster_summaries_cent$summary_graph
 
-## ----triad_marriage, warning = FALSE, fig.height = 6, fig.width = 7-----------
-flor_cluster$cluster_summaries_triad$marriage
+## ----triad_marriage, warning = FALSE, eval = FALSE----------------------------
+# flor_cluster$cluster_summaries_triad$marriage
 
-## ----triad_business, warning = FALSE, fig.height = 6, fig.width = 7-----------
-flor_cluster$cluster_summaries_triad$business
+## ----triad_business, warning = FALSE, eval = FALSE----------------------------
+# flor_cluster$cluster_summaries_triad$business
 
-## ----triad_summary, warning = FALSE, fig.height = 6, fig.width = 7------------
+## ----triad_summary, warning = FALSE-------------------------------------------
 flor_cluster$cluster_summaries_triad$summary_graph
 
-## ----igraph_viz, fig.height = 6, fig.width = 7--------------------------------
+## ----igraph_viz---------------------------------------------------------------
 igraph::V(nw_flor$florentine)$role <- flor_cluster$cluster_assignments$best_fit
 plot(nw_flor$florentine, 
      vertex.color = as.factor(igraph::V(nw_flor$florentine)$role),
-     vertex.label = igraph::V(nw_flor$florentine)$family)
+     vertex.label = NA)
 
-## ----fig.height = 6, fig.width = 7--------------------------------------------
+## ----heatmap1, fig.width=7----------------------------------------------------
 flor_cluster$cluster_relations_heatmaps$chisq # Chi-squared
-flor_cluster$cluster_relations_heatmaps$density # Density
+
+## ----heatmap2, eval = FALSE---------------------------------------------------
+# flor_cluster$cluster_relations_heatmaps$density # Density
+
+## ----heatmap3, fig.width=7----------------------------------------------------
 flor_cluster$cluster_relations_heatmaps$density_std # Density (Standardized)
-flor_cluster$cluster_relations_heatmaps$density_centered # Density (Zero-floored)
+
+## ----heatmap4, eval = FALSE---------------------------------------------------
+# flor_cluster$cluster_relations_heatmaps$density_centered # Density (Zero-floored)
 
 ## ----warning = FALSE, fig.show = "hide", message = FALSE----------------------
 flor_concor <- role_analysis(method = "concor",
@@ -89,32 +95,38 @@ flor_concor <- role_analysis(method = "concor",
                              viz = TRUE)
 
 ## ----block_assignments, eval = FALSE------------------------------------------
-#  flor_concor$concor_assignments %>%
-#    dplyr::select(id, family, dplyr::starts_with("block"), best_fit)
+# flor_concor$concor_assignments %>%
+#   dplyr::select(id, family, dplyr::starts_with("block"), best_fit)
 
 ## ----block_assignments_kable, echo = FALSE------------------------------------
 knitr::kable(flor_concor$concor_assignments %>%
   dplyr::select(id, family, dplyr::starts_with("block"), best_fit))
 
-## ----concor_modularity, fig.height = 6, fig.width = 7-------------------------
+## ----concor_modularity--------------------------------------------------------
 flor_concor$concor_modularity
 
-## ----concor_sociogram, fig.height = 6, fig.width = 7--------------------------
-igraph::V(nw_flor$florentine)$concor <- flor_concor$concor_assignments$best_fit
-plot(nw_flor$florentine, 
-     vertex.color = as.factor(igraph::V(nw_flor$florentine)$concor),
-     vertex.label = NA)
+## ----concor_sociogram, eval = FALSE-------------------------------------------
+# igraph::V(nw_flor$florentine)$concor <- flor_concor$concor_assignments$best_fit
+# plot(nw_flor$florentine,
+#      vertex.color = as.factor(igraph::V(nw_flor$florentine)$concor),
+#      vertex.label = NA)
 
-## ----concor_tree, fig.height = 6, fig.width = 7-------------------------------
-flor_concor$concor_block_tree
+## ----concor_tree, eval = FALSE------------------------------------------------
+# flor_concor$concor_block_tree
 
-## ----concor_heatmaps, fig.height = 6, fig.width = 7---------------------------
+## ----concor_heatmap1, fig.width=7---------------------------------------------
 flor_concor$concor_relations_heatmaps$chisq
-flor_concor$concor_relations_heatmaps$density
-flor_concor$concor_relations_heatmaps$density_std
-flor_concor$concor_relations_heatmaps$density_centered
 
-## ----concor_sociogram2, fig.height = 6, fig.width = 7-------------------------
+## ----concor_heatmap2, eval = FALSE--------------------------------------------
+# flor_concor$concor_relations_heatmaps$density
+
+## ----concor_heatmap3, fig.width=7---------------------------------------------
+flor_concor$concor_relations_heatmaps$density_std
+
+## ----concor_heatmap4, eval = FALSE--------------------------------------------
+# flor_concor$concor_relations_heatmaps$density_centered
+
+## ----concor_sociogram2--------------------------------------------------------
 igraph::V(nw_flor$florentine)$concor2 <- flor_concor$concor_assignments$block_2
 plot(nw_flor$florentine, 
      vertex.color = as.factor(igraph::V(nw_flor$florentine)$concor2),

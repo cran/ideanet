@@ -31,7 +31,7 @@ nw_fauxmesa <- netwrite(data_type = "edgelist",
 nw_fauxmesa$system_measure_plot
 
 ## ----system_level_measures, eval = FALSE--------------------------------------
-#  head(nw_fauxmesa$system_level_measures)
+# head(nw_fauxmesa$system_level_measures)
 
 ## ----system_level_measures_kable, echo = FALSE--------------------------------
 knitr::kable(head(nw_fauxmesa$system_level_measures))
@@ -55,13 +55,13 @@ plot(nw_fauxmesa$largest_bi_component, vertex.label = NA, vertex.size = 2, edge.
      main = "Largest Bicomponent")
 
 ## ----edgelist, eval = FALSE---------------------------------------------------
-#  head(nw_fauxmesa$edgelist)
+# head(nw_fauxmesa$edgelist)
 
 ## ----edgelist_kable, echo = FALSE---------------------------------------------
 knitr::kable(head(nw_fauxmesa$edgelist))
 
 ## ----node_measures, eval = FALSE----------------------------------------------
-#  head(nw_fauxmesa$node_measures)
+# head(nw_fauxmesa$node_measures)
 
 ## ----node_measures_kable, echo = FALSE----------------------------------------
 knitr::kable(head(nw_fauxmesa$node_measures))
@@ -85,7 +85,7 @@ plot(nw_triad$triad_igraph,
      vertex.label = NA)
 
 ## ----florentine_head, eval = FALSE--------------------------------------------
-#  head(florentine_edges)
+# head(florentine_edges)
 
 ## ----florentine_head_kable, echo = FALSE--------------------------------------
 knitr::kable(head(florentine_edges, n = 10))
@@ -100,13 +100,13 @@ nw_flor <- netwrite(nodelist = florentine_nodes,
                     net_name = "florentine")
 
 ## ----edgelist_business, eval = FALSE------------------------------------------
-#  head(nw_flor$edgelist$business)
+# head(nw_flor$edgelist$business)
 
 ## ----edgelist_business_kable, echo=FALSE--------------------------------------
 knitr::kable(head(nw_flor$edgelist$business))
 
 ## ----edgelist_summary, eval = FALSE-------------------------------------------
-#  head(nw_flor$edgelist$summary_graph)
+# head(nw_flor$edgelist$summary_graph)
 
 ## ----edgelist_summary_kable, echo = FALSE-------------------------------------
 knitr::kable(head(nw_flor$edgelist$summary_graph))
@@ -117,7 +117,7 @@ knitr::kable(nw_flor$node_measures %>%
   head())
 
 ## ----system_measures_multi, eval = FALSE--------------------------------------
-#  head(nw_flor$system_level_measures)
+# head(nw_flor$system_level_measures)
 
 ## ----system_measures_multi_kable, echo=FALSE----------------------------------
 knitr::kable(head(nw_flor$system_level_measures))
@@ -136,24 +136,24 @@ plot(nw_flor$igraph_list$business, vertex.label = NA, vertex.size = 4, edge.arro
 flor_communities <- comm_detect(nw_flor$florentine)
 
 ## ----comm_summaries, eval = FALSE---------------------------------------------
-#  flor_communities$summaries
+# flor_communities$summaries
 
 ## ----comm_summaries_kable, echo = FALSE---------------------------------------
 knitr::kable(flor_communities$summaries)
 
 ## ----score_comparison, eval = FALSE-------------------------------------------
-#  flor_communities$score_comparison
+# flor_communities$score_comparison
 
 ## ----score_comparison_kable, echo = FALSE-------------------------------------
 knitr::kable(flor_communities$score_comparison)
 
 ## ----memberships, eval = FALSE------------------------------------------------
-#  flor_communities$memberships
+# flor_communities$memberships
 
 ## ----memberships_kable, echo = FALSE------------------------------------------
 knitr::kable(head(flor_communities$memberships))
 
 ## ----membership_merge, eval = FALSE-------------------------------------------
-#  node_info <- nw_flor$node_measures %>%
-#    dplyr::left_join(flor_communities$memberships, by = "id")
+# node_info <- nw_flor$node_measures %>%
+#   dplyr::left_join(flor_communities$memberships, by = "id")
 

@@ -28,7 +28,7 @@ plot(with_aa_graph,
      )
 
 ## ----ego_reshape, eval = FALSE------------------------------------------------
-#  ?ego_reshape
+# ?ego_reshape
 
 ## ----setup--------------------------------------------------------------------
 library(ideanet) 
@@ -50,8 +50,8 @@ dplyr::glimpse(ngq_alters)
 dplyr::glimpse(ngq_aa)
 
 ## ----ego28, eval = FALSE------------------------------------------------------
-#  ngq_aa %>%
-#    dplyr::filter(ego_id == 4)
+# ngq_aa %>%
+#   dplyr::filter(ego_id == 4)
 
 ## ----ego28_knitr, echo = FALSE------------------------------------------------
 knitr::kable(head(ngq_aa %>%
@@ -73,34 +73,34 @@ ngq_nw <- ego_netwrite(egos = ngq_egos,
                        directed = FALSE)
 
 ## ----egos, eval = FALSE-------------------------------------------------------
-#  head(ngq_nw$egos)
+# head(ngq_nw$egos)
 
 ## ----egos_kable, echo = FALSE-------------------------------------------------
 knitr::kable(head(ngq_nw$egos))
 
 ## ----alters, eval = FALSE-----------------------------------------------------
-#  head(ngq_nw$alters)
+# head(ngq_nw$alters)
 
 ## ----alters_kable, echo = FALSE-----------------------------------------------
 knitr::kable(head(ngq_nw$alters))
 
 ## ----alter_edgelist, eval = FALSE---------------------------------------------
-#  head(ngq_nw$alter_edgelist)
+# head(ngq_nw$alter_edgelist)
 
 ## ----alter_edgelist_knitr, echo = FALSE---------------------------------------
 knitr::kable(head(ngq_nw$alter_edgelist))
 
 ## ----summaries, eval = FALSE--------------------------------------------------
-#  head(ngq_nw$summaries)
+# head(ngq_nw$summaries)
 
 ## ----summaries_kable, echo = FALSE--------------------------------------------
 knitr::kable(head(ngq_nw$summaries))
 
 ## ----ego_merge, eval = FALSE--------------------------------------------------
-#  egos2 <- ngq_nw$egos %>%
-#    dplyr::left_join(ngq_nw$summaries, by = "ego_id")
-#  
-#  head(egos2)
+# egos2 <- ngq_nw$egos %>%
+#   dplyr::left_join(ngq_nw$summaries, by = "ego_id")
+# 
+# head(egos2)
 
 ## ----ego_merge_kable, echo = FALSE--------------------------------------------
 egos2 <- ngq_nw$egos %>%
@@ -109,7 +109,7 @@ egos2 <- ngq_nw$egos %>%
 knitr::kable(head(egos2))
 
 ## ----overall, eval = FALSE----------------------------------------------------
-#  ngq_nw$overall_summary
+# ngq_nw$overall_summary
 
 ## ----overall_kable, echo = FALSE----------------------------------------------
 knitr::kable(ngq_nw$overall_summary)
@@ -121,7 +121,7 @@ names(ngq_nw$igraph_objects[[1]])
 which(lapply(ngq_nw$igraph_objects, function(x){x$ego} == 4) == TRUE)
 
 ## ----ego_info, eval = FALSE---------------------------------------------------
-#  ngq_nw$igraph_objects[[4]]$ego_info
+# ngq_nw$igraph_objects[[4]]$ego_info
 
 ## ----ego_info_kable, echo = FALSE---------------------------------------------
 knitr::kable(ngq_nw$igraph_objects[[4]]$ego_info)
@@ -196,32 +196,32 @@ knitr::kable(aa_types_nw$overall_summary)
 names(aa_types_nw$igraph_objects[[1]])
 
 ## ----aa_igraph_plots, eval = FALSE--------------------------------------------
-#  ego7 <- aa_types_nw$igraph_objects[[7]]$igraph_ego
-#  ego7_friends <- aa_types_nw$igraph_objects[[7]]$igraph_ego_friends
-#  ego7_family <- aa_types_nw$igraph_objects[[7]]$igraph_ego_related
-#  ego7_other <- aa_types_nw$igraph_objects[[7]]$igraph_ego_other_rel
-#  
-#  ego7_layout <- igraph::layout.fruchterman.reingold(ego7)
-#  
-#  plot(ego7,
-#       vertex.color = igraph::V(ego7)$sex,
-#       layout = ego7_layout,
-#       main = "Overall Network")
-#  
-#  plot(ego7_friends,
-#       vertex.color = igraph::V(ego7_friends)$sex,
-#       layout = ego7_layout,
-#       main = "Friends")
-#  
-#  plot(ego7_family,
-#       vertex.color = igraph::V(ego7_family)$sex,
-#       layout = ego7_layout,
-#       main = "Family")
-#  
-#  plot(ego7_other,
-#       vertex.color = igraph::V(ego7_other)$sex,
-#       layout = ego7_layout,
-#       main = "Other Relationships")
+# ego7 <- aa_types_nw$igraph_objects[[7]]$igraph_ego
+# ego7_friends <- aa_types_nw$igraph_objects[[7]]$igraph_ego_friends
+# ego7_family <- aa_types_nw$igraph_objects[[7]]$igraph_ego_related
+# ego7_other <- aa_types_nw$igraph_objects[[7]]$igraph_ego_other_rel
+# 
+# ego7_layout <- igraph::layout.fruchterman.reingold(ego7)
+# 
+# plot(ego7,
+#      vertex.color = igraph::V(ego7)$sex,
+#      layout = ego7_layout,
+#      main = "Overall Network")
+# 
+# plot(ego7_friends,
+#      vertex.color = igraph::V(ego7_friends)$sex,
+#      layout = ego7_layout,
+#      main = "Friends")
+# 
+# plot(ego7_family,
+#      vertex.color = igraph::V(ego7_family)$sex,
+#      layout = ego7_layout,
+#      main = "Family")
+# 
+# plot(ego7_other,
+#      vertex.color = igraph::V(ego7_other)$sex,
+#      layout = ego7_layout,
+#      main = "Other Relationships")
 
 ## ----aa_igraph_plots_kable, echo = FALSE, fig.height = 4, fig.width = 4-------
 ego7 <- aa_types_nw$igraph_objects[[7]]$igraph_ego
@@ -311,11 +311,11 @@ egos <- egos %>%
 knitr::kable(head(egos))
 
 ## ----egor_install, eval = FALSE-----------------------------------------------
-#  install.packages("egor")
+# install.packages("egor")
 
 ## ----egor, eval = FALSE-------------------------------------------------------
-#  egor
+# egor
 
 ## ----nc_read_vig, eval = FALSE------------------------------------------------
-#  vignette("nc_read", package = "ideanet")
+# vignette("nc_read", package = "ideanet")
 

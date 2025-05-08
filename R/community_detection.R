@@ -50,7 +50,32 @@ comm_detect <- function(g, modres=1,
                         slow_routines = FALSE,
                         shiny = FALSE) {
 
+  # browser()
 
+  # The `slow_routines` threshold of 5,000 nodes is usually too time-intensive
+  # for reasonable use in the Shiny app, even when it's passable in RStudio.
+  # We're going to set another, much smaller threshold for the Shiny app.
+  # Initial value set 2.13.25, but subject to change.
+  if (shiny == FALSE) {
+    shiny_skip <- FALSE
+  } else {
+      n_nodes <- igraph::vcount(g)
+      n_edges <- igraph::ecount(g)
+      shiny_skip <- n_nodes*n_edges > 100
+  }
+
+  # For processing generic igraph input, not necessarily created by netwrite:
+  if (NA %in% as.numeric(igraph::V(g)$name)) {
+    cat('\n')
+    warning("Non-numeric IDs detected in the igraph object's `name` attribute. The `name` attribute will be updated to contain zero-indexed ID numbers. The original `name` values will be reassigned to the `original_name` attribute.\n")
+    igraph::V(g)$original_name <- igraph::V(g)$name
+    igraph::V(g)$name <- 0:(igraph::vcount(g)-1)
+  }
+  if (is.null(igraph::V(g)$name)) {
+    cat('\n')
+    warning("No `name` attribute in the igraph object. A `name` attribute containing zero-indexed ID numbers will be added.\n")
+    igraph::V(g)$name <- 0:(igraph::vcount(g)-1)
+  }
 
   # Change ARPACK defaults
   # ad <- igraph::arpack_defaults
@@ -78,7 +103,12 @@ comm_detect <- function(g, modres=1,
     message("The `comm_detect` function currently supports undirected graphs only. Directed networks will be collapsed to undirected before running community detection algorithms.")
   }
 
-  g_undir <- igraph::as.undirected(g, mode = "collapse")
+  # Note that, if g is a weighted directed graph here, mode = "collapse"
+  # actually sums the weights of directed edges, so a reciprocal tie collapses
+  # to a single undirected edge but with the weight summed. However, if g is
+  # an undirected multigraph, as_undirected leaves it as such (hence the need
+  # for the simplify call that follows)
+  g_undir <- igraph::as_undirected(g, mode = "collapse") #`as.undirected()` was deprecated in igraph 2.1.0.
 
   # Simplify network to convert multiedges to weighted edges and remove self-loops
   # https://stackoverflow.com/questions/12998456/r-igraph-convert-parallel-edges-to-weight-attribute
@@ -103,11 +133,14 @@ comm_detect <- function(g, modres=1,
 
   # Betweenness does edges as distances. Need reciprocal
   if (stats::var(igraph::E(g_undir)$weight) > 0) {
-    warning("Calling cluster_edge_betweenness with reciprocal weights, which may affect selected membership vector incorrectly.")
+    warning("Calling cluster_edge_betweenness with reciprocal weights, which may affect selected membership vector incorrectly.\n")
   }
 
   if (n > 5000 & slow_routines == FALSE) {
-    # PICK UP HERE
+    edge_betweenness <- data.frame(names = igraph::V(g_undir)$name,
+                                   membership = NA,
+                                   modularity = NA)
+  } else if (shiny_skip == TRUE) {
     edge_betweenness <- data.frame(names = igraph::V(g_undir)$name,
                                    membership = NA,
                                    modularity = NA)
@@ -133,13 +166,13 @@ comm_detect <- function(g, modres=1,
 
   leiden_mod <- igraph::cluster_leiden(g_undir,
                                        objective_function = "modularity",
-                                       resolution_parameter=modres,
+                                       resolution = modres,
                                        weights = igraph::E(g_undir)$weight,
                                        n_iterations = 5) # Only undirected graphs # Leiden is better version of louvain
 
   leiden_cpm <- igraph::cluster_leiden(g_undir,
                                        objective_function = "CPM",
-                                       resolution_parameter = w_dens,
+                                       resolution = w_dens,
                                        weights = igraph::E(g_undir)$weight,
                                        n_iterations = 5)
 
@@ -162,6 +195,9 @@ comm_detect <- function(g, modres=1,
 
     if (n > 5000 & slow_routines == FALSE) {
 
+      leading_eigen <- list(membership = rep(NA, length(igraph::V(g_undir))),
+                            modularity = NA)
+    } else if (shiny_skip == TRUE) {
       leading_eigen <- list(membership = rep(NA, length(igraph::V(g_undir))),
                             modularity = NA)
     } else {
@@ -207,6 +243,10 @@ comm_detect <- function(g, modres=1,
 
 
         if (n > 5000 & slow_routines == FALSE) {
+
+          this_leading_eigen <- rep(NA, length(igraph::V(this_component)))
+
+        } else if (shiny_skip == TRUE) {
 
           this_leading_eigen <- rep(NA, length(igraph::V(this_component)))
 
@@ -318,6 +358,14 @@ comm_detect <- function(g, modres=1,
   # This is probably where we want to add the two additional methods Gabe programmed
 
   ## Clique Percolation ##
+  if (n > 5000 & slow_routines == FALSE) {
+
+    cf1_membership <-  data.frame(id = memberships$id,
+                                  cp_cluster = NA)
+  } else if (shiny_skip == TRUE) {
+    cf1_membership <-  data.frame(id = memberships$id,
+                                 cp_cluster = NA)
+  } else {
   cf1 <- CliquePercolation::cpAlgorithm(W = g_sym, k = 3, method = "unweighted") # Running as unweighted
   clust <- cf1$list.of.communities.labels # extract cluster assignments
   #### In some cases, such as when given a star graph, `CliquePercolation` won't detect any communities.
@@ -332,16 +380,16 @@ comm_detect <- function(g, modres=1,
     cf1_membership <- data.frame(id = memberships$id,
                                  cp_cluster = 1)
   }
-  # cf1_membership$id <- as.character(cf1_membership$id)
-
-
+  }
 
   ## Link comm ##
   if (n > 5000 & slow_routines == FALSE) {
 
     lc_membership <-  data.frame(id = memberships$id,
                                  lc_cluster = NA)
-
+  } else if (shiny_skip == TRUE) {
+    lc_membership <-  data.frame(id = memberships$id,
+                                 lc_cluster = NA)
   } else {
     #gmat <- as.matrix((get.adjacency(network))) # LC does not require it
     linkcomm_el <- igraph::as_data_frame(g_undir, what = "edges") %>% dplyr::select(.data$from, .data$to)
@@ -352,7 +400,7 @@ comm_detect <- function(g, modres=1,
                    error = function(e) {return(NULL)})# Defaulting to false for now)
     if (!is.null(lc)) {
       # browser()
-      lc <- linkcomm::getLinkCommunities(linkcomm_el, hcmethod = "average", directed = FALSE, verbose = FALSE, plot = FALSE) # Defaulting to false for now
+      # lc <- linkcomm::getLinkCommunities(linkcomm_el, hcmethod = "average", directed = FALSE, verbose = FALSE, plot = FALSE) # Defaulting to false for now
       clust <- split(as.numeric(lc$nodeclusters$node), lc$nodeclusters$cluster) # Turn into list of vectors
       clust <- clust[order(as.numeric(names(clust)))] # Make sure its ordered
       lc_membership <- multigroup_assign(g_sym, clust)
@@ -391,11 +439,30 @@ comm_detect <- function(g, modres=1,
                                          #modularity = max(edge_betweenness$modularity))
                                          modularity = NA)
 
+    cf1_stats <- data.frame(method = "cp",
+                            num_communities = NA,
+                            modularity = NA)
+
     lc_stats <- data.frame(method = "lc",
                            num_communities = NA,
                            modularity = NA)
 
 
+  } else if (shiny_skip == TRUE) {
+
+    edge_betweenness_stats <- data.frame(method = "edge_betweenness",
+                                         num_communities = NA,
+                                         #modularity = edge_betweenness$modularity)
+                                         #modularity = max(edge_betweenness$modularity))
+                                         modularity = NA)
+
+    cf1_stats <- data.frame(method = "cp",
+                            num_communities = NA,
+                            modularity = NA)
+
+    lc_stats <- data.frame(method = "lc",
+                           num_communities = NA,
+                           modularity = NA)
 
   } else {
 
@@ -405,9 +472,13 @@ comm_detect <- function(g, modres=1,
                                          #modularity = max(edge_betweenness$modularity))
                                          modularity = igraph::modularity(g_undir, edge_betweenness$membership, weights = igraph::E(g_undir)$weight))
 
+    cf1_stats <- data.frame(method = "cp",
+                            num_communities = length(unique(memberships$cp_cluster)),
+                            modularity = igraph::modularity(g_undir, membership = (memberships$cp_cluster), weights = igraph::E(g_undir)$weight))
+
     lc_stats <- data.frame(method = "lc",
-                           num_communities = length(unique(memberships$cp_cluster)),
-                           modularity = igraph::modularity(g_undir, membership = (memberships$lc_cluster + 1), weights = igraph::E(g_undir)$weight))
+                           num_communities = length(unique(memberships$lc_cluster)),
+                           modularity = igraph::modularity(g_undir, membership = (memberships$lc_cluster), weights = igraph::E(g_undir)$weight))
 
   }
 
@@ -432,7 +503,11 @@ comm_detect <- function(g, modres=1,
       leading_eigen_stats <- data.frame(method = "leading_eigen",
                                         num_communities = NA,
                                         modularity = NA)
+    } else if (shiny_skip == TRUE) {
 
+      leading_eigen_stats <- data.frame(method = "leading_eigen",
+                                        num_communities = NA,
+                                        modularity = NA)
     } else {
 
       leading_eigen_stats <- data.frame(method = "leading_eigen",
@@ -448,7 +523,11 @@ comm_detect <- function(g, modres=1,
       leading_eigen_stats <- data.frame(method = "leading_eigen",
                                         num_communities = NA,
                                         modularity = NA)
+    } else if (shiny_skip == TRUE) {
 
+      leading_eigen_stats <- data.frame(method = "leading_eigen",
+                                        num_communities = NA,
+                                        modularity = NA)
     } else {
 
       igraph::V(g_undir)$leading_eigen <- memberships$leading_eigen_membership
@@ -498,12 +577,8 @@ comm_detect <- function(g, modres=1,
   walktrap_stats <- walktrap_stats[which(walktrap_stats$modularity == max(walktrap_stats$modularity)),]
 
   igraph::V(g)$cf1 <- memberships$cp_cluster
-  igraph::V(g)$lc <- memberships$lc
+  igraph::V(g)$lc <- memberships$lc_cluster
 
-
-  cf1_stats <- data.frame(method = "cp",
-                          num_communities = length(unique(memberships$cp_cluster)),
-                          modularity = igraph::modularity(g_undir, membership = (memberships$cp_cluster + 1), weights = igraph::E(g_undir)$weight))
 
 
   community_summaries <- rbind(edge_betweenness_stats,
@@ -541,6 +616,12 @@ comm_detect <- function(g, modres=1,
     memberships$sbm_membership <- NA
     sbm_stats <- data.frame(method = "sbm", num_communities = NA,
                             modularity = NA)
+
+  } else if (shiny_skip == TRUE) {
+    memberships$sbm_membership <- NA
+    sbm_stats <- data.frame(method = "sbm", num_communities = NA,
+                            modularity = NA)
+
   } else {
     sbm <- spectral_sbm(Adj = g_sym,
                         k = median_k)
@@ -644,7 +725,7 @@ comm_detect <- function(g, modres=1,
 
       # browser()
 
-      fr <- igraph::layout.fruchterman.reingold(g)
+      fr <- igraph::layout_with_fr(g) #`layout.fruchterman.reingold()` was deprecated in igraph 2.1.0.
 
       eb_plot <- function(){
         plot(g,
@@ -877,15 +958,15 @@ multigroup_assign <- function(gmat, clust){
 
 
   for (i in 1:length(clust)){ # assign a 1 if node is part of community
-    cpcomms[clust[[i]],i]<-1
+    cpcomms[rownames(cpcomms) %in% clust[[i]], i] <- 1
   }
 
-  ties_sent <- gmat%*%cpcomms # number of ties ego sends to group k
-
-  ties_sent <- ties_sent*cpcomms # remove ties that are sent to a group ego is not a part of
+  ties_sent <- gmat %*% cpcomms # number of ties ego sends to group k
+  ties_sent <- ties_sent * cpcomms # remove ties that are sent to a group ego is not a part of
 
   cp_maxcomm <- matrix(nrow = nrow(ties_sent), ncol = 1, 0)
   rownames(cp_maxcomm) <- rownames(gmat)
+
   for (i in 1:nrow(ties_sent)) {
     maxcols <- which(ties_sent[i,] == max(ties_sent[i,])); # Pick the community to which ego has the most ties
     if (length(maxcols) > 1){
@@ -896,7 +977,14 @@ multigroup_assign <- function(gmat, clust){
 
   nodes <- as.numeric(rownames(gmat))
   isolates <- setdiff(nodes, unlist(clust))
-  cp_maxcomm[row.names(cp_maxcomm) %in% isolates, ] <- 0   # reassign isolates to isolate cluster
+
+  if (length(isolates) > 0) { # if isolates, assign them each to their own cluster
+    new_cluster_start <- length(clust) + 1
+    isolate_clusters <- seq(new_cluster_start, new_cluster_start + length(isolates) - 1)
+    names(isolate_clusters) <- isolates
+    cp_maxcomm[rownames(cp_maxcomm) %in% isolates, ] <- isolate_clusters[as.character(rownames(cp_maxcomm)[rownames(cp_maxcomm) %in% isolates])]
+  }
+
   cp_maxcomm <- tibble::tibble(cluster = cp_maxcomm) %>% dplyr::mutate(id = as.numeric(rownames(gmat)))
   return(cp_maxcomm)
 }
